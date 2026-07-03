@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seraphina Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      /* Refined Brand Palette */
+      --strawberry-magenta: #d81b60;
+      --strawberry-solid: #e91e63; /* For Unscheduled Cards / Danger Operations */
+      --peachy-orange: #ffb347;     /* For Scheduled Bookings & Subscribed Cards */
+      --milky-blue-deep: #01579b; 
+      
+      /* The Perfect Milky Pastel Blue */
+      --milky-blue-refined: #b2d8eb; 
+      
+      /* Backgrounds & Tones */
+      --vanilla-cream: #fffdf5;
+      --soft-peach: #fff1e6;
+      --milk-white: #ffffff;
+      
+      /* Layout Colors */
+      --text-main: #4e342e; 
+      --border-brand: #f3e5f5;
+      
+      /* Alternating Week Highlights */
+      --base-week-bg: #fffbf0; 
+      --alt-week-bg: #f0f7ff;  
+      
+      --slot-outline: #fce4ec; 
+      --shadow-brand: rgba(216, 27, 96, 0.12);
+      --shadow-peach: rgba(255, 179, 71, 0.25);
+    }
+
+    body {
+      font-family: 'Our Serif', 'Comfortaa', cursive;
+      background-color: var(--vanilla-cream);
+      color: var(--text-main);
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app-layout {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* SIDEBAR WITH TABS */
+    .sidebar {
+      width: 340px;
+      background: var(--soft-peach);
+      padding: 30px 25px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; 
+      overflow-y: hidden;
+      border-right: 4px solid var(--milk-white);
+      box-shadow: 10px 0 30px rgba(0,0,0,0.02);
+    }
+
+    .sidebar-top-content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .sidebar-header h3 { 
+      margin: 0; 
+      color: var(--strawberry-magenta); 
+      font-size: 18px; 
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .sidebar-tabs {
+      display: flex;
+      background: rgba(78, 52, 46, 0.05);
+      padding: 4px;
+      border-radius: 14px;
+      margin-bottom: 5px;
+      flex-shrink: 0;
+    }
+    .tab-btn {
+      flex: 1; background: none; border: none; padding: 8px;
+      font-family: inherit; font-weight: 700; font-size: 13px;
+      color: var(--text-main); cursor: pointer; border-radius: 10px;
+      transition: all 0.2s ease;
+    }
+    .tab-btn.active {
+      background: var(--milk-white); color: var(--strawberry-magenta);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    .edit-toggle-lnk {
+      font-size: 13px; color: var(--milky-blue-deep); cursor: pointer;
+      font-weight: 700; text-decoration: none; border-bottom: 2px dashed var(--peachy-orange);
+    }
+
+    .add-cust-box {
+      flex-shrink: 0;
+    }
+
+    /* SCROLLABLE LIST WRAPPER */
+    .customer-list { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 12px; 
+      margin-top: 10px; 
+      overflow-y: auto; 
+      flex: 1;
+      padding-right: 5px;
+    }
+    
+    .customer-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .customer-list::-webkit-scrollbar-thumb {
+      background-color: rgba(78, 52, 46, 0.15);
+      border-radius: 10px;
+    }
+    
+    .customer-card {
+      position: relative; background: var(--strawberry-solid); color: var(--milk-white);
+      padding: 18px; border-radius: 22px; cursor: grab; font-weight: 700;
+      font-size: 16px; text-align: center; box-shadow: 0 5px 12px var(--shadow-brand);
+      border: 3px solid var(--milk-white); transition: all 0.25s ease;
+      flex-shrink: 0;
+    }
+    .customer-card:hover { transform: translateY(-2px); box-shadow: 0 8px 18px var(--shadow-brand); }
+    
+    .customer-card.subscribed-card { 
+      background: var(--peachy-orange);
+      box-shadow: 0 5px 12px var(--shadow-peach);
+      cursor: pointer; 
+    }
+    .customer-card.subscribed-card:hover { box-shadow: 0 8px 18px var(--shadow-peach); }
+
+    /* Tooltip */
+    .delivery-tooltip {
+      visibility: hidden; opacity: 0; position: absolute; bottom: 110%; left: 50%;
+      transform: translateX(-50%) translateY(5px); background: var(--text-main);
+      color: var(--vanilla-cream); padding: 8px 14px; border-radius: 12px;
+      font-size: 12px; font-weight: 500; white-space: nowrap; z-index: 10;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.15); transition: all 0.2s ease;
+    }
+    .delivery-tooltip::after {
+      content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px;
+      border-width: 6px; border-style: solid; border-color: var(--text-main) transparent transparent transparent;
+    }
+    .customer-card:hover .delivery-tooltip { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .mgmt-row {
+      display: flex; gap: 8px; align-items: center; background: var(--milk-white);
+      padding: 10px; border-radius: 18px; border: 2px solid var(--border-brand);
+      flex-shrink: 0;
+    }
+    .mgmt-btn {
+      background: var(--vanilla-cream); border: 1px solid var(--border-brand); 
+      border-radius: 12px; padding: 6px 10px; cursor: pointer; font-size: 14px;
+    }
+
+    /* SETTINGS COMPONENT */
+    .settings-footer {
+      margin-top: 20px; padding-top: 15px; border-top: 2px dashed rgba(78, 52, 46, 0.1);
+      flex-shrink: 0;
+    }
+    .gear-icon-btn {
+      background: none; border: none; font-size: 20px; cursor: pointer; 
+      opacity: 0.6; transition: opacity 0.2s, transform 0.3s; padding: 0;
+    }
+    .gear-icon-btn:hover { opacity: 1; transform: rotate(45deg); }
+    .settings-panel {
+      display: none; flex-direction: column; gap: 10px; background: var(--milk-white);
+      padding: 15px; border-radius: 18px; margin-top: 10px; border: 2px solid var(--border-brand);
+    }
+    .settings-panel button {
+      font-family: inherit; font-weight: 700; font-size: 12px; padding: 8px;
+      border-radius: 10px; cursor: pointer; border: none; transition: background 0.2s;
+    }
+
+    /* CALENDAR */
+    .calendar-container {
+      flex: 1; background: var(--milk-white); margin: 25px; padding: 25px;
+      border-radius: 40px; box-shadow: 0 15px 50px rgba(0,0,0,0.04);
+      display: flex; flex-direction: column; border: 8px solid var(--soft-peach);
+      overflow: hidden;
+    }
+
+    .calendar-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+    }
+    .nav-btn {
+      background: var(--alt-week-bg); color: var(--milky-blue-deep); border: none; padding: 10px 20px; 
+      border-radius: 18px; cursor: pointer; font-weight: 700; transition: all 0.2s;
+      border: 2px solid var(--milk-white); font-family: inherit;
+    }
+    .nav-btn:hover { background: var(--peachy-orange); color: var(--milk-white); box-shadow: 0 4px 12px rgba(255, 179, 71, 0.3); }
+
+    .calendar-title { font-size: 32px; font-weight: 700; color: var(--strawberry-magenta); }
+
+    .weekday-header-row {
+      display: grid; grid-template-columns: repeat(7, 1fr); text-align: center;
+      font-weight: 700; padding-bottom: 15px; font-size: 18px;
+      background: linear-gradient(90deg, var(--strawberry-magenta) 0%, var(--peachy-orange) 50%, var(--milky-blue-deep) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    .calendar-grid {
+      flex: 1; display: grid; grid-template-rows: repeat(2, 1fr); grid-template-columns: repeat(7, 1fr);
+      border-radius: 30px; overflow: hidden; border: 3px solid var(--soft-peach);
+    }
+
+    .day-cell {
+      background: var(--base-week-bg); border-right: 1px solid var(--soft-peach);
+      border-bottom: 1px solid var(--soft-peach); padding: 12px; display: flex; flex-direction: column;
+    }
+    .day-cell.alt-week-shade { background: var(--alt-week-bg); }
+    .day-cell.today-highlight { 
+      background: #fff0f3 !important; border: 3px solid var(--strawberry-magenta); 
+      box-shadow: inset 0 0 15px rgba(216, 27, 96, 0.08); z-index: 2;
+    }
+
+    .day-number-label { font-size: 16px; font-weight: 700; color: var(--peachy-orange); margin-bottom: 10px; }
+    .slots-container { flex: 1; display: grid; grid-template-rows: repeat(6, 1fr); gap: 6px; }
+    .slots-container.drag-over { background-color: rgba(255, 179, 71, 0.1); border-radius: 15px; }
+
+    .slot-row { width: 100%; height: 100%; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
+    .slot-empty { background-color: var(--milk-white) !important; border: 2px solid var(--slot-outline); }
+    
+    .slot-claimed {
+      background: var(--peachy-orange); color: var(--milk-white);
+      border: 2px solid var(--milk-white); box-shadow: 0 4px 10px var(--shadow-peach); cursor: pointer;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(78, 52, 46, 0.4); backdrop-filter: blur(5px); z-index: 9999; justify-content: center; align-items: center;
+    }
+    .modal-box { background: var(--milk-white); padding: 40px; border-radius: 45px; width: 480px; border: 12px solid var(--soft-peach); box-shadow: 0 30px 60px rgba(0,0,0,0.15); text-align: center; }
+    .modal-option-btn { background: var(--vanilla-cream); border: 2px solid var(--border-brand); border-radius: 20px; padding: 18px; cursor: pointer; font-weight: 700; font-family: inherit; color: var(--text-main); transition: all 0.2s; }
+    .modal-option-btn:hover { background: var(--strawberry-magenta); color: var(--milk-white); border-color: var(--strawberry-magenta); transform: translateY(-2px); }
+    .qty-input { border: 4px solid var(--alt-week-bg); border-radius: 18px; color: var(--strawberry-magenta); padding: 10px; text-align: center; font-size: 22px; font-weight: 700; width: 80px; font-family: inherit; }
+    
+    /* Cancellation Modal Buttons with refined Saturated Milky Blue */
+    .btn-action { color: white; border: none; padding: 16px; border-radius: 18px; width: 100%; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.2s; }
+    .btn-action:hover { opacity: 0.9; }
+    
+    .btn-action.btn-refined-skip { background: var(--milky-blue-refined); } /* Least drastic: Soft Pastel Milky Blue */
+    .btn-action.btn-caution-forward { background: var(--peachy-orange); }   /* Moderate change: Caution Orange */
+    .btn-action.btn-danger-wipe { background: var(--strawberry-solid); }     /* Most drastic: Danger Strawberry Red */
+    
+    .btn-dismiss { background: rgba(78, 52, 46, 0.05); color: var(--text-main); border: none; padding: 12px; border-radius: 14px; width: 100%; font-weight: 700; cursor: pointer; font-family: inherit; margin-top: 15px; transition: background 0.2s; }
+    .btn-dismiss:hover { background: rgba(78, 52, 46, 0.1); }
+  </style>
+</head>
+<body>
+
+  <div class="app-layout">
+    <div class="sidebar">
+      <div class="sidebar-top-content">
+        <div class="sidebar-header" style="display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
+          <h3 id="sidebar-title">Waiting for bread...</h3>
+          <span class="edit-toggle-lnk" id="edit-mode-toggle" onclick="toggleEditMode()">Edit List</span>
+        </div>
+        
+        <div class="sidebar-tabs" id="sidebar-tabs-container">
+          <button class="tab-btn active" id="tab-unscheduled" onclick="switchSidebarTab('unscheduled')">Unscheduled</button>
+          <button class="tab-btn" id="tab-subscribed" onclick="switchSidebarTab('subscribed')">Subscribed</button>
+        </div>
+
+        <div class="add-cust-box" id="add-customer-container" style="display: none; gap: 8px;">
+          <input type="text" style="padding:12px; border-radius:15px; border:2px solid var(--soft-peach); flex:1; font-family:inherit;" id="new-cust-input" placeholder="Name...">
+          <button class="nav-btn" onclick="addNewCustomer()" style="background:var(--peachy-orange); color:white; padding:8px 15px;">Add</button>
+        </div>
+
+        <div class="customer-list" id="external-customers"></div>
+      </div>
+
+      <div class="settings-footer">
+        <button class="gear-icon-btn" onclick="toggleSettingsPanel()">⚙️</button>
+        <div class="settings-panel" id="settings-panel">
+          <button style="background: var(--alt-week-bg); color: var(--milky-blue-deep);" onclick="exportDataBackup()">📥 Export Backup File</button>
+          <button style="background: var(--soft-peach); color: var(--text-main);" onclick="document.getElementById('import-file-input').click()">📤 Import Backup File</button>
+          <button style="background: #ffebee; color: var(--strawberry-magenta); border: 1px dashed var(--strawberry-magenta);" onclick="clearEntireSchedule()">⚠️ Nuke Schedule</button>
+          <input type="file" id="import-file-input" style="display:none;" accept=".json" onchange="importDataBackup(event)">
+        </div>
+      </div>
+    </div>
+
+    <div class="calendar-container">
+      <div class="calendar-header">
+        <div class="nav-buttons" style="display:flex; gap:10px;">
+          <button class="nav-btn" onclick="navigateWeeks(-1)">◀</button>
+          <button class="nav-btn" onclick="navigateWeeks(1)">▶</button>
+          <button class="nav-btn" onclick="navigateToToday()">Today</button>
+        </div>
+        <div class="calendar-title" id="calendar-view-title">Bakery View</div>
+        <div style="width: 140px;"></div> 
+      </div>
+      
+      <div class="weekday-header-row">
+        <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+      </div>
+
+      <div class="calendar-grid" id="calendar-grid-body"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="claim-modal">
+    <div class="modal-box">
+      <h4 style="color:var(--strawberry-magenta); font-size:26px; margin-top:0;">Loaf Details</h4>
+      <div style="display:flex; justify-content:center; align-items:center; gap:20px; margin: 25px 0; background:var(--base-week-bg); padding:20px; border-radius:25px;">
+        <span style="font-weight:700; font-size:18px;">Quantity:</span>
+        <input type="number" class="qty-input" id="booking-qty-input" value="1" min="1" max="6">
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <button class="modal-option-btn" onclick="confirmClaim('once')">Just Once</button>
+        <button class="modal-option-btn" onclick="confirmClaim('7')">Weekly</button>
+        <button class="modal-option-btn" onclick="confirmClaim('14')">Bi-Weekly</button>
+        <button class="modal-option-btn" onclick="confirmClaim('28')">Monthly</button>
+      </div>
+      <button onclick="closeModal('claim-modal')" style="width:100%; margin-top:20px; background:none; border:none; text-decoration:underline; cursor:pointer; color:var(--milky-blue-deep); font-weight:700; font-family:inherit;">Go back</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="remove-modal">
+    <div class="modal-box">
+      <h4 style="color:var(--strawberry-magenta); font-size:24px; margin-top:0;">Update Delivery</h4>
+      <p style="margin-bottom:25px; font-weight:500;">Manage this specific booking:</p>
+      <button class="btn-action btn-refined-skip" onclick="executeRemoval('single')" style="margin-bottom:12px;">Skip this day</button>
+      <button class="btn-action btn-caution-forward" onclick="executeRemoval('forward')" style="margin-bottom:12px;">Cancel this and future</button>
+      <button class="btn-action btn-danger-wipe" onclick="executeRemoval('all-wipe')" style="margin-bottom:12px;">Remove all bookings</button>
+      <button class="btn-dismiss" onclick="closeModal('remove-modal')">Keep it</button>
+    </div>
+  </div>
+
+  <script>
+    let currentStartDate = new Date(); 
+    
+    function getStartOfWeekMonday(d) {
+      let dateCopy = new Date(d.getTime());
+      let day = dateCopy.getDay();
+      let diff = dateCopy.getDate() - day + (day === 0 ? -6 : 1); 
+      return new Date(dateCopy.setDate(diff));
+    }
+
+    currentStartDate = getStartOfWeekMonday(currentStartDate);
+
+    let activeSlotIndex = null;
+    let activeCustomerName = "";
+    let activeTargetDate = null;
+    let selectedBookingNode = null;
+    let isEditMode = false;
+    let currentSidebarTab = "unscheduled"; 
+
+    let allCustomers = JSON.parse(localStorage.getItem('seraphina_customers')) || ["Alice Smith", "Bob Jones", "Charlie Brown", "Diana Prince"];
+    let scheduleData = JSON.parse(localStorage.getItem('seraphina_schedule')) || [];
+
+    allCustomers.sort();
+
+    function saveToLocalStorage() {
+      localStorage.setItem('seraphina_customers', JSON.stringify(allCustomers));
+      localStorage.setItem('seraphina_schedule', JSON.stringify(scheduleData));
+    }
+
+    function getLocalDateString(dateObj) {
+      let y = dateObj.getFullYear();
+      let m = String(dateObj.getMonth() + 1).padStart(2, '0');
+      let d = String(dateObj.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function getISOWeekNumber(d) {
+      let date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7));
+      let yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+      return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderSidebar();
+      renderNativeCalendarGrid();
+    });
+
+    function navigateWeeks(dir) {
+      currentStartDate.setDate(currentStartDate.getDate() + (dir * 7));
+      renderNativeCalendarGrid();
+    }
+
+    function navigateToToday() {
+      currentStartDate = getStartOfWeekMonday(new Date());
+      renderNativeCalendarGrid();
+    }
+
+    function switchSidebarTab(tabName) {
+      currentSidebarTab = tabName;
+      document.getElementById('tab-unscheduled').classList.toggle('active', tabName === 'unscheduled');
+      document.getElementById('tab-subscribed').classList.toggle('active', tabName === 'subscribed');
+      renderSidebar();
+    }
+
+    function toggleEditMode() {
+      isEditMode = !isEditMode;
+      const toggleLnk = document.getElementById('edit-mode-toggle');
+      const addContainer = document.getElementById('add-customer-container');
+      const tabsContainer = document.getElementById('sidebar-tabs-container');
+      const title = document.getElementById('sidebar-title');
+      
+      if (isEditMode) {
+        toggleLnk.innerText = "Done";
+        title.innerText = "Roster Editor";
+        addContainer.style.display = "flex";
+        tabsContainer.style.display = "none";
+      } else {
+        toggleLnk.innerText = "Edit List";
+        title.innerText = "Waiting for bread...";
+        addContainer.style.display = "none";
+        tabsContainer.style.display = "flex";
+      }
+      renderSidebar();
+    }
+
+    function toggleSettingsPanel() {
+      const panel = document.getElementById('settings-panel');
+      panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    function clearEntireSchedule() {
+      if (confirm("Are you absolutely sure you want to completely clear the calendar? This resets everyone back to the unscheduled column.")) {
+        scheduleData = [];
+        saveToLocalStorage();
+        renderSidebar();
+        renderNativeCalendarGrid();
+        toggleSettingsPanel();
+      }
+    }
+
+    function exportDataBackup() {
+      const backupPackage = { customers: allCustomers, schedule: scheduleData };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupPackage));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `seraphina_backup_${getLocalDateString(new Date())}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function importDataBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed.customers && parsed.schedule) {
+            allCustomers = parsed.customers;
+            scheduleData = parsed.schedule;
+            allCustomers.sort(); 
+            saveToLocalStorage();
+            renderSidebar();
+            renderNativeCalendarGrid();
+            alert("Backup loaded beautifully!");
+            toggleSettingsPanel();
+          } else { alert("Invalid backup format."); }
+        } catch (err) { alert("Error reading file."); }
+      };
+      reader.readAsText(file);
+    }
+
+    function addNewCustomer() {
+      const input = document.getElementById('new-cust-input');
+      const name = input.value.trim();
+      if (!name) return;
+      allCustomers.push(name);
+      allCustomers.sort(); 
+      input.value = "";
+      saveToLocalStorage();
+      renderSidebar();
+    }
+
+    function editCustomerName(oldName) {
+      const newName = prompt(`Rename ${oldName}:`, oldName);
+      if (!newName || newName.trim() === oldName) return;
+      allCustomers = allCustomers.map(c => c === oldName ? newName.trim() : c);
+      allCustomers.sort();
+      scheduleData.forEach(item => { if (item.customer === oldName) item.customer = newName.trim(); });
+      saveToLocalStorage();
+      renderSidebar();
+      renderNativeCalendarGrid();
+    }
+
+    function deleteCustomer(name) {
+      if (!confirm(`Permanently remove ${name}?`)) return;
+      allCustomers = allCustomers.filter(c => c !== name);
+      scheduleData = scheduleData.filter(item => item.customer !== name);
+      saveToLocalStorage();
+      renderSidebar();
+      renderNativeCalendarGrid();
+    }
+
+    function getBookingsForDay(dateStr) {
+      let d = new Date(dateStr + 'T00:00:00');
+      let dayNum = d.getDay();
+      
+      let rawCandidates = scheduleData.filter(item => {
+        if (item.type === 'single' && item.date === dateStr) return true;
+        if (item.type === 'recurring' && dateStr >= item.startRecur) {
+          if (item.endRecur && dateStr >= item.endRecur) return false;
+          let baseDay = new Date(item.startRecur + 'T00:00:00').getDay();
+          if (dayNum !== baseDay) return false;
+          let daysDiff = Math.round((d - new Date(item.startRecur + 'T00:00:00')) / (1000 * 60 * 60 * 24));
+          return (daysDiff % item.interval === 0);
+        }
+        return false;
+      });
+
+      let explicitlyCanceled = scheduleData
+        .filter(item => item.type === 'canceled' && item.date === dateStr)
+        .map(item => item.customer);
+
+      let activeDayOrders = rawCandidates.filter(item => !explicitlyCanceled.includes(item.customer));
+
+      let layout = [];
+      let currentSlot = 1;
+      for (let item of activeDayOrders) {
+        if (currentSlot > 6) break;
+        layout.push({
+          slotIndex: currentSlot,
+          quantity: item.quantity,
+          customer: item.customer,
+          dataRef: item
+        });
+        currentSlot += item.quantity;
+      }
+      return layout;
+    }
+
+    function getBookingForCell(dateStr, slotIndex) {
+      let dayLayout = getBookingsForDay(dateStr);
+      return dayLayout.find(b => slotIndex >= b.slotIndex && slotIndex < b.slotIndex + b.quantity);
+    }
+
+    function findNextDeliveryDate(customerName) {
+      let testDate = new Date();
+      for (let d = 0; d < 365; d++) {
+        let ts = getLocalDateString(testDate);
+        let dayLayout = getBookingsForDay(ts);
+        if (dayLayout.some(b => b.customer === customerName)) {
+          return testDate.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+        }
+        testDate.setDate(testDate.getDate() + 1);
+      }
+      return "No active schedule";
+    }
+
+    function getFirstAvailableSlotIndex(dateStr) {
+      let dayLayout = getBookingsForDay(dateStr);
+      if (dayLayout.length === 0) return 1;
+      let lastBooking = dayLayout[dayLayout.length - 1];
+      let nextSlot = lastBooking.slotIndex + lastBooking.quantity;
+      return nextSlot <= 6 ? nextSlot : null;
+    }
+
+    function renderNativeCalendarGrid() {
+      const gridBody = document.getElementById('calendar-grid-body');
+      gridBody.innerHTML = "";
+      let workingDate = new Date(currentStartDate.getTime());
+      
+      let mid = new Date(currentStartDate.getTime());
+      mid.setDate(mid.getDate() + 7);
+      document.getElementById('calendar-view-title').innerText = mid.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+      let todayStr = getLocalDateString(new Date());
+
+      for (let day = 0; day < 14; day++) {
+        let dateStr = getLocalDateString(workingDate);
+        let cell = document.createElement('div');
+        cell.className = "day-cell";
+        
+        let currentWeekNum = getISOWeekNumber(workingDate);
+        if (currentWeekNum % 2 !== 0) cell.classList.add('alt-week-shade');
+        if (dateStr === todayStr) cell.classList.add('today-highlight');
+
+        let labelText = workingDate.getDate();
+        if (workingDate.getDate() === 1 || day === 0) labelText = workingDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+        let numLabel = document.createElement('div');
+        numLabel.className = 'day-number-label';
+        numLabel.innerText = labelText;
+        cell.appendChild(numLabel);
+
+        let slotsContainer = document.createElement('div');
+        slotsContainer.className = 'slots-container';
+
+        slotsContainer.addEventListener('dragover', (e) => { e.preventDefault(); slotsContainer.classList.add('drag-over'); });
+        slotsContainer.addEventListener('dragleave', () => slotsContainer.classList.remove('drag-over'));
+        slotsContainer.addEventListener('drop', (e) => {
+          e.preventDefault();
+          slotsContainer.classList.remove('drag-over');
+          let firstOpenSlot = getFirstAvailableSlotIndex(dateStr);
+          if (!firstOpenSlot) return alert("Day is Full!");
+          activeTargetDate = dateStr;
+          activeSlotIndex = firstOpenSlot;
+          if (selectedBookingNode) executeGridShift();
+          else {
+            document.getElementById('booking-qty-input').value = 1; 
+            document.getElementById('claim-modal').style.display = 'flex';
+          }
+        });
+
+        for (let i = 1; i <= 6; i++) {
+          let match = getBookingForCell(dateStr, i);
+          if (match) {
+            if (match.slotIndex === i) {
+              let row = document.createElement('div');
+              row.className = "slot-row slot-claimed";
+              row.style.gridRow = `span ${match.quantity}`;
+              row.innerText = match.quantity > 1 ? `${match.customer} (${match.quantity})` : match.customer;
+              row.onclick = () => {
+                selectedBookingNode = { date: dateStr, slotIndex: match.slotIndex, dataRef: match.dataRef };
+                document.getElementById('remove-modal').style.display = 'flex';
+              };
+              row.draggable = true;
+              row.ondragstart = () => {
+                activeCustomerName = match.customer;
+                selectedBookingNode = { date: dateStr, slotIndex: match.slotIndex, dataRef: match.dataRef };
+              };
+              slotsContainer.appendChild(row);
+            }
+          } else {
+            let row = document.createElement('div');
+            row.className = "slot-row slot-empty";
+            slotsContainer.appendChild(row);
+          }
+        }
+        cell.appendChild(slotsContainer);
+        gridBody.appendChild(cell);
+        workingDate.setDate(workingDate.getDate() + 1);
+      }
+    }
+
+    function confirmClaim(mode) {
+      let qty = parseInt(document.getElementById('booking-qty-input').value) || 1;
+      if (activeSlotIndex + qty - 1 > 6) return alert("Too many loaves for the day!");
+      closeModal('claim-modal');
+      let payload = { slotIndex: activeSlotIndex, customer: activeCustomerName, date: activeTargetDate, quantity: qty };
+      if (mode === 'once') payload.type = 'single';
+      else { payload.type = 'recurring'; payload.startRecur = activeTargetDate; payload.interval = parseInt(mode); }
+      scheduleData.push(payload);
+      saveToLocalStorage();
+      renderSidebar(); renderNativeCalendarGrid();
+    }
+
+    function executeGridShift() {
+      let data = selectedBookingNode.dataRef;
+      if (selectedBookingNode.date === activeTargetDate) return; 
+      if (activeSlotIndex + data.quantity - 1 > 6) return alert("Not enough space for this order!");
+      if (data.type === 'recurring') {
+        if (confirm("Move future deliveries to this new day?")) {
+          data.endRecur = selectedBookingNode.date; 
+          scheduleData.push({ type: 'recurring', customer: data.customer, slotIndex: activeSlotIndex, startRecur: activeTargetDate, interval: data.interval, quantity: data.quantity });
+        }
+      } else { data.date = activeTargetDate; data.slotIndex = activeSlotIndex; }
+      selectedBookingNode = null; 
+      saveToLocalStorage();
+      renderSidebar(); renderNativeCalendarGrid();
+    }
+
+    function renderSidebar() {
+      const containerEl = document.getElementById('external-customers');
+      containerEl.innerHTML = "";
+      
+      allCustomers.forEach(cust => {
+        if (isEditMode) {
+          let row = document.createElement('div');
+          row.className = 'mgmt-row';
+          row.innerHTML = `<span style="flex:1; font-weight:700;">${cust}</span><button class="mgmt-btn" onclick="editCustomerName('${cust}')">✏️</button><button class="mgmt-btn" onclick="deleteCustomer('${cust}')">🗑️</button>`;
+          containerEl.appendChild(row);
+          return;
+        }
+
+        let hasActiveFuture = false;
+        let test = new Date();
+        for (let d = 0; d < 365; d++) {
+          let ts = getLocalDateString(test);
+          let dayLayout = getBookingsForDay(ts);
+          if (dayLayout.some(b => b.customer === cust)) { hasActiveFuture = true; break; }
+          test.setDate(test.getDate() + 1);
+        }
+
+        if (currentSidebarTab === "unscheduled" && !hasActiveFuture) {
+          let card = document.createElement('div');
+          card.className = 'customer-card'; card.draggable = true; card.innerText = cust;
+          card.ondragstart = () => { activeCustomerName = cust; selectedBookingNode = null; };
+          containerEl.appendChild(card);
+        }
+        
+        if (currentSidebarTab === "subscribed" && hasActiveFuture) {
+          let card = document.createElement('div');
+          card.className = 'customer-card subscribed-card'; card.innerText = cust;
+          
+          let nextDateStr = findNextDeliveryDate(cust);
+          let tooltip = document.createElement('div');
+          tooltip.className = 'delivery-tooltip';
+          tooltip.innerText = `Next Loaf: ${nextDateStr}`;
+          card.appendChild(tooltip);
+          
+          containerEl.appendChild(card);
+        }
+      });
+    }
+
+    function executeRemoval(scope) {
+      closeModal('remove-modal');
+      let target = selectedBookingNode;
+      
+      if (scope === 'single') {
+        if (target.dataRef.type === 'recurring') {
+          scheduleData.push({ type: 'canceled', date: target.date, slotIndex: target.slotIndex, customer: target.dataRef.customer });
+        } else {
+          scheduleData = scheduleData.filter(item => item !== target.dataRef);
+        }
+      } else if (scope === 'forward') {
+        if (target.dataRef.type === 'recurring') {
+          target.dataRef.endRecur = target.date;
+        } else {
+          scheduleData = scheduleData.filter(item => item !== target.dataRef);
+        }
+      } else if (scope === 'all-wipe') {
+        scheduleData = scheduleData.filter(item => item.customer !== target.dataRef.customer);
+      }
+      
+      saveToLocalStorage();
+      renderSidebar(); renderNativeCalendarGrid();
+    }
+
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+  </script>
+</body>
+</html>
