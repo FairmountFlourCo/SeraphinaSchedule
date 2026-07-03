@@ -13,7 +13,8 @@
       /* Refined Brand Palette */
       --strawberry-magenta: #d81b60;
       --strawberry-solid: #e91e63; /* For Unscheduled Cards / Danger Operations */
-      --peachy-orange: #ffb347;     /* For Scheduled Bookings & Subscribed Cards */
+      --peachy-orange: #ffb347;     /* For Scheduled Bookings on Grid */
+      --peachy-subscribed: #f56954; /* A vibrant, cheerful coral-red that separates beautifully from peach & strawberry */
       --milky-blue-deep: #01579b; 
       
       /* The Perfect Milky Pastel Blue */
@@ -34,7 +35,7 @@
       
       --slot-outline: #fce4ec; 
       --shadow-brand: rgba(216, 27, 96, 0.12);
-      --shadow-peach: rgba(255, 179, 71, 0.25);
+      --shadow-peach: rgba(245, 105, 84, 0.25);
     }
 
     body {
@@ -141,8 +142,10 @@
     }
     .customer-card:hover { transform: translateY(-2px); box-shadow: 0 8px 18px var(--shadow-brand); }
     
+    /* Coral variation for Subscribed sidebar */
     .customer-card.subscribed-card { 
-      background: var(--peachy-orange);
+      background: var(--peachy-subscribed);
+      color: var(--milk-white); 
       box-shadow: 0 5px 12px var(--shadow-peach);
       cursor: pointer; 
     }
@@ -172,14 +175,14 @@
       border-radius: 12px; padding: 6px 10px; cursor: pointer; font-size: 14px;
     }
 
-    /* SETTINGS COMPONENT */
+    /* SETTINGS COMPONENT WITH GEAR TRADITION */
     .settings-footer {
       margin-top: 20px; padding-top: 15px; border-top: 2px dashed rgba(78, 52, 46, 0.1);
       flex-shrink: 0;
     }
     .gear-icon-btn {
-      background: none; border: none; font-size: 20px; cursor: pointer; 
-      opacity: 0.6; transition: opacity 0.2s, transform 0.3s; padding: 0;
+      background: none; border: none; font-size: 22px; color: var(--text-main); cursor: pointer; 
+      opacity: 0.6; transition: opacity 0.2s, transform 0.3s; padding: 0; display: inline-block;
     }
     .gear-icon-btn:hover { opacity: 1; transform: rotate(45deg); }
     .settings-panel {
@@ -209,11 +212,12 @@
     }
     .nav-btn:hover { background: var(--peachy-orange); color: var(--milk-white); box-shadow: 0 4px 12px rgba(255, 179, 71, 0.3); }
 
-    .calendar-title { font-size: 32px; font-weight: 700; color: var(--strawberry-magenta); }
+    .calendar-title { font-size: 32px; font-weight: 700; color: var(--strawberry-magenta); text-transform: uppercase; }
 
     .weekday-header-row {
       display: grid; grid-template-columns: repeat(7, 1fr); text-align: center;
       font-weight: 700; padding-bottom: 15px; font-size: 18px;
+      text-transform: uppercase;
       background: linear-gradient(90deg, var(--strawberry-magenta) 0%, var(--peachy-orange) 50%, var(--milky-blue-deep) 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
@@ -233,7 +237,9 @@
       box-shadow: inset 0 0 15px rgba(216, 27, 96, 0.08); z-index: 2;
     }
 
-    .day-number-label { font-size: 16px; font-weight: 700; color: var(--peachy-orange); margin-bottom: 10px; }
+    .day-number-label { font-size: 16px; font-weight: 700; color: var(--peachy-orange); margin-bottom: 10px; cursor: pointer; display: inline-block; }
+    .day-number-label:hover { text-decoration: underline; color: var(--strawberry-magenta); }
+    
     .slots-container { flex: 1; display: grid; grid-template-rows: repeat(6, 1fr); gap: 6px; }
     .slots-container.drag-over { background-color: rgba(255, 179, 71, 0.1); border-radius: 15px; }
 
@@ -255,16 +261,22 @@
     .modal-option-btn:hover { background: var(--strawberry-magenta); color: var(--milk-white); border-color: var(--strawberry-magenta); transform: translateY(-2px); }
     .qty-input { border: 4px solid var(--alt-week-bg); border-radius: 18px; color: var(--strawberry-magenta); padding: 10px; text-align: center; font-size: 22px; font-weight: 700; width: 80px; font-family: inherit; }
     
-    /* Cancellation Modal Buttons with refined Saturated Milky Blue */
+    /* Cancellation & Action Modal Buttons */
     .btn-action { color: white; border: none; padding: 16px; border-radius: 18px; width: 100%; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.2s; }
     .btn-action:hover { opacity: 0.9; }
     
-    .btn-action.btn-refined-skip { background: var(--milky-blue-refined); } /* Least drastic: Soft Pastel Milky Blue */
+    .btn-action.btn-refined-skip { background: var(--milky-blue-refined); color: var(--text-main); } /* Soft Pastel Milky Blue */
     .btn-action.btn-caution-forward { background: var(--peachy-orange); }   /* Moderate change: Caution Orange */
     .btn-action.btn-danger-wipe { background: var(--strawberry-solid); }     /* Most drastic: Danger Strawberry Red */
     
     .btn-dismiss { background: rgba(78, 52, 46, 0.05); color: var(--text-main); border: none; padding: 12px; border-radius: 14px; width: 100%; font-weight: 700; cursor: pointer; font-family: inherit; margin-top: 15px; transition: background 0.2s; }
     .btn-dismiss:hover { background: rgba(78, 52, 46, 0.1); }
+
+    .date-range-box {
+      background: var(--vanilla-cream); padding: 15px; border-radius: 20px; border: 2px dashed var(--peachy-orange); margin: 15px 0; text-align: left;
+    }
+    .date-range-box label { font-size: 13px; font-weight: 700; color: var(--text-main); }
+    .date-range-box input { width: 90%; padding: 8px; border-radius: 10px; border: 2px solid var(--soft-peach); font-family: inherit; margin-top: 4px; margin-bottom: 10px; }
   </style>
 </head>
 <body>
@@ -291,11 +303,11 @@
       </div>
 
       <div class="settings-footer">
-        <button class="gear-icon-btn" onclick="toggleSettingsPanel()">⚙️</button>
+        <button class="gear-icon-btn" onclick="toggleSettingsPanel()">⚙</button>
         <div class="settings-panel" id="settings-panel">
-          <button style="background: var(--alt-week-bg); color: var(--milky-blue-deep);" onclick="exportDataBackup()">📥 Export Backup File</button>
-          <button style="background: var(--soft-peach); color: var(--text-main);" onclick="document.getElementById('import-file-input').click()">📤 Import Backup File</button>
-          <button style="background: #ffebee; color: var(--strawberry-magenta); border: 1px dashed var(--strawberry-magenta);" onclick="clearEntireSchedule()">⚠️ Nuke Schedule</button>
+          <button style="background: var(--alt-week-bg); color: var(--milky-blue-deep);" onclick="exportDataBackup()">Export Backup File</button>
+          <button style="background: var(--soft-peach); color: var(--text-main);" onclick="document.getElementById('import-file-input').click()">Import Backup File</button>
+          <button style="background: #ffebee; color: var(--strawberry-magenta); border: 1px dashed var(--strawberry-magenta);" onclick="clearEntireSchedule()">Nuke Schedule</button>
           <input type="file" id="import-file-input" style="display:none;" accept=".json" onchange="importDataBackup(event)">
         </div>
       </div>
@@ -348,6 +360,33 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="day-mgmt-modal">
+    <div class="modal-box" style="width: 500px;">
+      <h4 id="day-mgmt-title" style="color:var(--strawberry-magenta); font-size:24px; margin-top:0; text-transform:uppercase;">Day Options</h4>
+      <p style="margin-bottom:20px; font-weight:500;">Choose an operational change for this day:</p>
+      
+      <button class="btn-action btn-danger-wipe" onclick="executeDayClear()" style="margin-bottom:15px;">Clear All Bookings On This Date</button>
+      
+      <div style="border-top: 2px dashed var(--soft-peach); margin: 15px 0;"></div>
+      
+      <button class="btn-action btn-refined-skip" onclick="executeDayBlock('single')" style="margin-bottom:10px;">Block Off Just This Single Date</button>
+      <button class="btn-action btn-refined-skip" onclick="executeDayBlock('recurring')" style="margin-bottom:10px;">Block Off Every Consecutive Day-of-Week</button>
+      
+      <div class="date-range-box">
+        <span style="font-weight:700; font-size:14px; color:var(--strawberry-magenta); display:block; margin-bottom:8px;">Block Off Custom Date Range:</span>
+        <label>Start Date:</label><br>
+        <input type="date" id="block-range-start"><br>
+        <label>End Date:</label><br>
+        <input type="date" id="block-range-end">
+        <button class="btn-action btn-refined-skip" onclick="executeDayBlock('range')" style="padding:10px; font-size:13px; margin-top:5px; width:100%;">Apply Block to Range</button>
+      </div>
+
+      <button class="btn-action" onclick="executeUnblockDay()" style="margin-bottom:10px; background:var(--milky-blue-deep); color:white;">Unblock / Re-open This Date</button>
+
+      <button class="btn-dismiss" onclick="closeModal('day-mgmt-modal')">Cancel</button>
+    </div>
+  </div>
+
   <script>
     let currentStartDate = new Date(); 
     
@@ -366,15 +405,18 @@
     let selectedBookingNode = null;
     let isEditMode = false;
     let currentSidebarTab = "unscheduled"; 
+    let activeMgmtDateStr = ""; 
 
     let allCustomers = JSON.parse(localStorage.getItem('seraphina_customers')) || ["Alice Smith", "Bob Jones", "Charlie Brown", "Diana Prince"];
     let scheduleData = JSON.parse(localStorage.getItem('seraphina_schedule')) || [];
+    let blockedDays = JSON.parse(localStorage.getItem('seraphina_blocks')) || [];
 
     allCustomers.sort();
 
     function saveToLocalStorage() {
       localStorage.setItem('seraphina_customers', JSON.stringify(allCustomers));
       localStorage.setItem('seraphina_schedule', JSON.stringify(scheduleData));
+      localStorage.setItem('seraphina_blocks', JSON.stringify(blockedDays));
     }
 
     function getLocalDateString(dateObj) {
@@ -442,6 +484,7 @@
     function clearEntireSchedule() {
       if (confirm("Are you absolutely sure you want to completely clear the calendar? This resets everyone back to the unscheduled column.")) {
         scheduleData = [];
+        blockedDays = [];
         saveToLocalStorage();
         renderSidebar();
         renderNativeCalendarGrid();
@@ -450,7 +493,7 @@
     }
 
     function exportDataBackup() {
-      const backupPackage = { customers: allCustomers, schedule: scheduleData };
+      const backupPackage = { customers: allCustomers, schedule: scheduleData, blocks: blockedDays };
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupPackage));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
@@ -470,6 +513,7 @@
           if (parsed.customers && parsed.schedule) {
             allCustomers = parsed.customers;
             scheduleData = parsed.schedule;
+            blockedDays = parsed.blocks || [];
             allCustomers.sort(); 
             saveToLocalStorage();
             renderSidebar();
@@ -513,7 +557,20 @@
       renderNativeCalendarGrid();
     }
 
+    function isDayBlocked(dateStr) {
+      let d = new Date(dateStr + 'T00:00:00');
+      let dayNum = d.getDay();
+      return blockedDays.some(block => {
+        if (block.type === 'single' && block.date === dateStr) return true;
+        if (block.type === 'recurring' && block.dayOfWeek === dayNum && dateStr >= block.startRecur) return true;
+        if (block.type === 'range' && dateStr >= block.start && dateStr <= block.end) return true;
+        return false;
+      });
+    }
+
     function getBookingsForDay(dateStr) {
+      if (isDayBlocked(dateStr)) return []; 
+      
       let d = new Date(dateStr + 'T00:00:00');
       let dayNum = d.getDay();
       
@@ -569,11 +626,71 @@
     }
 
     function getFirstAvailableSlotIndex(dateStr) {
+      if (isDayBlocked(dateStr)) return null;
       let dayLayout = getBookingsForDay(dateStr);
       if (dayLayout.length === 0) return 1;
       let lastBooking = dayLayout[dayLayout.length - 1];
       let nextSlot = lastBooking.slotIndex + lastBooking.quantity;
       return nextSlot <= 6 ? nextSlot : null;
+    }
+
+    function openDayManagement(dateStr) {
+      activeMgmtDateStr = dateStr;
+      let prettyDate = new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+      document.getElementById('day-mgmt-title').innerText = prettyDate;
+      document.getElementById('block-range-start').value = dateStr;
+      document.getElementById('day-mgmt-modal').style.display = 'flex';
+    }
+
+    function executeDayClear() {
+      if (confirm(`Clear all current customer loaves booked on ${activeMgmtDateStr}?`)) {
+        let dayLayout = getBookingsForDay(activeMgmtDateStr);
+        dayLayout.forEach(booking => {
+          if (booking.dataRef.type === 'single') {
+            scheduleData = scheduleData.filter(item => item !== booking.dataRef);
+          } else if (booking.dataRef.type === 'recurring') {
+            scheduleData.push({ type: 'canceled', date: activeMgmtDateStr, slotIndex: booking.slotIndex, customer: booking.customer });
+          }
+        });
+        saveToLocalStorage();
+        closeModal('day-mgmt-modal');
+        renderSidebar(); renderNativeCalendarGrid();
+      }
+    }
+
+    function executeDayBlock(mode) {
+      if (mode === 'single') {
+        blockedDays.push({ type: 'single', date: activeMgmtDateStr });
+      } else if (mode === 'recurring') {
+        let dayNum = new Date(activeMgmtDateStr + 'T00:00:00').getDay();
+        let weekdayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        if (confirm(`Block off every consecutive ${weekdayNames[dayNum]} moving forward from this date?`)) {
+          blockedDays.push({ type: 'recurring', dayOfWeek: dayNum, startRecur: activeMgmtDateStr });
+        } else { return; }
+      } else if (mode === 'range') {
+        let start = document.getElementById('block-range-start').value;
+        let end = document.getElementById('block-range-end').value;
+        if (!start || !end || start > end) return alert("Please select a valid custom date range!");
+        blockedDays.push({ type: 'range', start: start, end: end });
+      }
+      saveToLocalStorage();
+      closeModal('day-mgmt-modal');
+      renderSidebar(); renderNativeCalendarGrid();
+    }
+
+    function executeUnblockDay() {
+      blockedDays = blockedDays.filter(block => {
+        if (block.type === 'single' && block.date === activeMgmtDateStr) return false;
+        if (block.type === 'range' && activeMgmtDateStr >= block.start && activeMgmtDateStr <= block.end) return false;
+        if (block.type === 'recurring') {
+          let dayNum = new Date(activeMgmtDateStr + 'T00:00:00').getDay();
+          if (block.dayOfWeek === dayNum && activeMgmtDateStr >= block.startRecur) return false;
+        }
+        return true;
+      });
+      saveToLocalStorage();
+      closeModal('day-mgmt-modal');
+      renderSidebar(); renderNativeCalendarGrid();
     }
 
     function renderNativeCalendarGrid() {
@@ -602,53 +719,59 @@
         let numLabel = document.createElement('div');
         numLabel.className = 'day-number-label';
         numLabel.innerText = labelText;
+        numLabel.onclick = (e) => { e.stopPropagation(); openDayManagement(dateStr); };
         cell.appendChild(numLabel);
 
-        let slotsContainer = document.createElement('div');
-        slotsContainer.className = 'slots-container';
+        let isBlocked = isDayBlocked(dateStr);
 
-        slotsContainer.addEventListener('dragover', (e) => { e.preventDefault(); slotsContainer.classList.add('drag-over'); });
-        slotsContainer.addEventListener('dragleave', () => slotsContainer.classList.remove('drag-over'));
-        slotsContainer.addEventListener('drop', (e) => {
-          e.preventDefault();
-          slotsContainer.classList.remove('drag-over');
-          let firstOpenSlot = getFirstAvailableSlotIndex(dateStr);
-          if (!firstOpenSlot) return alert("Day is Full!");
-          activeTargetDate = dateStr;
-          activeSlotIndex = firstOpenSlot;
-          if (selectedBookingNode) executeGridShift();
-          else {
-            document.getElementById('booking-qty-input').value = 1; 
-            document.getElementById('claim-modal').style.display = 'flex';
-          }
-        });
+        if (!isBlocked) {
+          let slotsContainer = document.createElement('div');
+          slotsContainer.className = 'slots-container';
 
-        for (let i = 1; i <= 6; i++) {
-          let match = getBookingForCell(dateStr, i);
-          if (match) {
-            if (match.slotIndex === i) {
+          slotsContainer.addEventListener('dragover', (e) => { e.preventDefault(); slotsContainer.classList.add('drag-over'); });
+          slotsContainer.addEventListener('dragleave', () => slotsContainer.classList.remove('drag-over'));
+          slotsContainer.addEventListener('drop', (e) => {
+            e.preventDefault();
+            slotsContainer.classList.remove('drag-over');
+            let firstOpenSlot = getFirstAvailableSlotIndex(dateStr);
+            if (!firstOpenSlot) return alert("Day is Full!");
+            activeTargetDate = dateStr;
+            activeSlotIndex = firstOpenSlot;
+            if (selectedBookingNode) executeGridShift();
+            else {
+              document.getElementById('booking-qty-input').value = 1; 
+              document.getElementById('claim-modal').style.display = 'flex';
+            }
+          });
+
+          for (let i = 1; i <= 6; i++) {
+            let match = getBookingForCell(dateStr, i);
+            if (match) {
+              if (match.slotIndex === i) {
+                let row = document.createElement('div');
+                row.className = "slot-row slot-claimed";
+                row.style.gridRow = `span ${match.quantity}`;
+                row.innerText = match.quantity > 1 ? `${match.customer} (${match.quantity})` : match.customer;
+                row.onclick = () => {
+                  selectedBookingNode = { date: dateStr, slotIndex: match.slotIndex, dataRef: match.dataRef };
+                  document.getElementById('remove-modal').style.display = 'flex';
+                };
+                row.draggable = true;
+                row.ondragstart = () => {
+                  activeCustomerName = match.customer;
+                  selectedBookingNode = { date: dateStr, slotIndex: match.slotIndex, dataRef: match.dataRef };
+                };
+                slotsContainer.appendChild(row);
+              }
+            } else {
               let row = document.createElement('div');
-              row.className = "slot-row slot-claimed";
-              row.style.gridRow = `span ${match.quantity}`;
-              row.innerText = match.quantity > 1 ? `${match.customer} (${match.quantity})` : match.customer;
-              row.onclick = () => {
-                selectedBookingNode = { date: dateStr, slotIndex: match.slotIndex, dataRef: match.dataRef };
-                document.getElementById('remove-modal').style.display = 'flex';
-              };
-              row.draggable = true;
-              row.ondragstart = () => {
-                activeCustomerName = match.customer;
-                selectedBookingNode = { date: dateStr, slotIndex: match.slotIndex, dataRef: match.dataRef };
-              };
+              row.className = "slot-row slot-empty";
               slotsContainer.appendChild(row);
             }
-          } else {
-            let row = document.createElement('div');
-            row.className = "slot-row slot-empty";
-            slotsContainer.appendChild(row);
           }
+          cell.appendChild(slotsContainer);
         }
-        cell.appendChild(slotsContainer);
+
         gridBody.appendChild(cell);
         workingDate.setDate(workingDate.getDate() + 1);
       }
@@ -689,7 +812,7 @@
         if (isEditMode) {
           let row = document.createElement('div');
           row.className = 'mgmt-row';
-          row.innerHTML = `<span style="flex:1; font-weight:700;">${cust}</span><button class="mgmt-btn" onclick="editCustomerName('${cust}')">✏️</button><button class="mgmt-btn" onclick="deleteCustomer('${cust}')">🗑️</button>`;
+          row.innerHTML = `<span style="flex:1; font-weight:700;">${cust}</span><button class="mgmt-btn" onclick="editCustomerName('${cust}')">Edit</button><button class="mgmt-btn" onclick="deleteCustomer('${cust}')">Delete</button>`;
           containerEl.appendChild(row);
           return;
         }
